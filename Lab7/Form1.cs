@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,101 +13,159 @@ namespace Lab7
 {
     public partial class Form1 : Form
     {
+        bool operationmade = false;
+        double result = 0;
+        string operation = "";
+        bool pointender=false;
+        bool equal = false;
+        string ans = "";
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void SevenButtom_Click(object sender, EventArgs e)
+        private void button_Click_Operators(object sender, EventArgs e)
         {
-            ScreenTextBox.Text += "7";
-        }
+            Button button = (Button)sender;
+            operation = button.Text;
+            if (equal)
+            {
+                ScreenTextBox.Text = "0";
+                GeneralScreenBox.Text = result.ToString()+operation;
 
-        private void EightButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "8";
-        }
+            }
+            if (!operationmade&&!equal)
+            {
+                GeneralScreenBox.Text += ScreenTextBox.Text + operation;
 
-        private void NineButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "9";
-        }
+            }
 
-        private void FourButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "4";
-        }
+            result = double.Parse(ScreenTextBox.Text);
+            operationmade = true;
+            equal = false;
 
-        private void FiveButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "5";
-        }
-
-        private void SixButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "6";
-        }
-
-        private void OneButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "1";
-        }
-
-        private void TwoButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "2";
-        }
-
-        private void ThreeButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "3";
-        }
-
-        private void ZeroButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "0";
-        }
-
-        private void DelButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text = ScreenTextBox.Text.Remove(ScreenTextBox.Text.Length - 1);
-        }
-
-
-
-        private void AnsButtom_Click(object sender, EventArgs e)
-        {
 
         }
 
-        private void EqualButtom_Click(object sender, EventArgs e)
+        private void button_Click_Numbers(object sender, EventArgs e)
         {
-            ScreenTextBox.Clear();
-        }
 
-        private void MultiplyButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "x";
-        }
+            if (equal)
+            {
+                result = 0;
+                GeneralScreenBox.Clear();
+                ScreenTextBox.Clear();
+            }
+            Button button = (Button)sender;
+            if (operationmade)
+            {
+                ScreenTextBox.Clear();
+            }
+            if (button.Text == "." && ScreenTextBox.Text.Contains(".") || ScreenTextBox.Text == "0" && button.Text == "0")
+            {
 
-        private void DivideButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "/";
-        }
+            }
+            else if (button.Name == "AnsButtom")
+            {
+                ScreenTextBox.Text = ans;
+            }
+            else if (button.Text == ".")
+            {
+                ScreenTextBox.Text += ",";
+                pointender = true;
+            }
+            else if (ScreenTextBox.Text == "0")
+            {
+                ScreenTextBox.Text = button.Text;
+                pointender = false;
+            }
+            else
+            {
+                ScreenTextBox.Text += button.Text;
+                pointender = false;
+            }
+            
+            operationmade = false;
+            equal = false;
 
-        private void SumButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "+";
-        }
 
-        private void RestButtom_Click(object sender, EventArgs e)
-        {
-            ScreenTextBox.Text += "-";
+
         }
 
         private void ClearButtom_Click(object sender, EventArgs e)
         {
-            ScreenTextBox.Clear();
+            ScreenTextBox.Text = "0";
+            GeneralScreenBox.Text = "";
+            result = 0;
         }
+
+        private void DelButtom_Click(object sender, EventArgs e)
+        {
+            if (equal)
+            {
+                result = 0;
+                GeneralScreenBox.Text = "";
+            }
+            ScreenTextBox.Text = "0";
+        }
+
+        private void EqualButtom_Click(object sender, EventArgs e)
+        {
+            if (pointender)
+            {
+                ScreenTextBox.Text = "Syntax.Error";
+                GeneralScreenBox.Clear();
+            }
+            else if (!operationmade)
+            {
+                GeneralScreenBox.Text += ScreenTextBox.Text;
+                switch (operation)
+                {
+                    case "+":
+                        ScreenTextBox.Text = (result + double.Parse(ScreenTextBox.Text)).ToString();
+                        break;
+                    case "-":
+                        ScreenTextBox.Text = (result - double.Parse(ScreenTextBox.Text)).ToString();
+                        break;
+                    case "x":
+                        ScreenTextBox.Text = (result * double.Parse(ScreenTextBox.Text)).ToString();
+                        break;
+                    case "/":
+                        if (double.Parse(ScreenTextBox.Text) == 0)
+                        {
+                            ScreenTextBox.Text = "Math.Error";
+                            GeneralScreenBox.Clear();
+
+                        }
+                        else
+                        {
+                            ScreenTextBox.Text = (result / double.Parse(ScreenTextBox.Text)).ToString();
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+                if (ScreenTextBox.Text != "Math.Error")
+                {
+                    History.Text += GeneralScreenBox.Text+"=\n";
+                    History.Text += ScreenTextBox.Text + "\n";
+                    result = double.Parse(ScreenTextBox.Text);
+                    ans = result.ToString();
+                }
+
+                else
+                {
+                    result = 0;
+                }
+                equal = true;
+
+            }
+
+            
+
+        }
+
+
     }
 }
